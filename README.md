@@ -3,6 +3,8 @@ BibTex Unification of Papers Based on the Titles Index at dblp
 
 基于 dblp 索引标题的论文 BibTeX 信息统一(中文版说明见后）
 
+___
+
 ## BibTeX Unification of Papers Based on the Titles Index at dblp
 
 ### Why & What
@@ -108,6 +110,8 @@ For example: `references.bib`
   year      = {2019}
 }
 ```
+
+___
 
 
 ## 基于 dblp 索引标题的论文 BibTeX 信息统一
