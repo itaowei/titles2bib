@@ -3,9 +3,7 @@ import argparse
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-# import sys
-# reload(sys)
-# sys.setdefaultencoding('utf-8')
+import re
 
 header = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36',
@@ -49,7 +47,7 @@ def get_bibtex(url, style):
     return res[0].get_text()
 
 if  __name__ == '__main__':
-
+    # get parameters
     parser = argparse.ArgumentParser(description='BibTex Unification of Papers Based on dblp Titles Index')
     parser.add_argument("-in","--input", dest="input_file_path", metavar="papers_titles.csv",
                         help='the path of the input file including papers\' titles', required = True)
@@ -57,11 +55,10 @@ if  __name__ == '__main__':
                         help='the path of the output file including papers\' BiTex', required = True)
     parser.add_argument("-m","--mode", dest="output_file_mode", metavar="w", default="w",
                         help='mode you want to open the output file', required = False)
-    parser.add_argument("-s","--style", dest="style_of_BibTex", metavar=0, type = int, default=0,
-                        help='style of the BibTex, 0: condensed; 1: standard', required = False)
-
+    parser.add_argument("-s","--style", dest="style_of_BibTex", metavar=0, type = int, default=1,
+                        help='style of the BibTex, 0: standard; 1: condensed; 2: more condensed', required = False)
     args = parser.parse_args()
-    ################### Edit Here ###################
+    
 
     file_input_path = args.input_file_path # The path and name of the file e.g. "D:/input.csv"
     file_output_path = args.output_file_path # The path and name of the file e.g. "D:/bibtex.bib"
@@ -69,10 +66,13 @@ if  __name__ == '__main__':
                 # "a" - Append - Opens a file for appending, creates the file if it does not exist
                 # "w" - Write - Opens a file for writing, creates the file if it does not exist
                 # "x" - Create - Creates the specified file, returns an error if the file exist
-    style = args.style_of_BibTex # 0: condensed; 1: standard
-
-    ################### Edit Here ###################
-
+    style_n = args.style_of_BibTex # 0: standard; 1: condensed; 2: more condensed (delete string between 'DBLP:' and the 2nd '/' after that)
+    if style_n == 1 or style_n == 2:
+        style = 0
+    else:
+        style = 1
+        
+    # get titles' names
     file = pd.read_csv(file_input_path, encoding = 'utf-8')
     df = pd.DataFrame(file)
 
@@ -81,28 +81,39 @@ if  __name__ == '__main__':
     n_cmplt, n_fail = 0, 0
     cmplt, fail =[], []
 
+    # search each of titles' names
     for i in df["Title"]:
-        print("=== start ===")
-        print(i)
+        print("=== start searching for " + i + " ===")
         url = search_for(i)
         print(url)
         if url != False:
             n_cmplt+=1
             cmplt.append(i)
             bibtex_info = get_bibtex(url,style)
+            if style_n == 2: # make BibTex more condensed
+                bibtex_info = re.sub('DBLP:[^/]+/[^/]+/', "", bibtex_info, count=1)# delete string between 'DBLP:' and the 2nd '/' after that
             print(bibtex_info)
-            output_file.write(str(bibtex_info))
-            output_file.write('\n')
-            print("=== completed ===")
+            output_file.write(bibtex_info)
+            print("=== completed searching for " + i + " ===\n")
         else:
             n_fail+=1
             fail.append(i)
-            print("Sorry! "+ i +" cannot be dealt with (")
-            print("===  failed  ===")
+            print("===  Sorry! it failed searching for " + i + " ===\n")
 
     output_file.close()
-    print("*"*10)
-    print(str(n_cmplt) + " papers can be handled by their titles.")
-    print(str(n_fail) + " papers cannot be handled including:")
-    for i in fail:
-        print(i)
+    
+    # output results of search
+    print("*"*28)
+    if n_cmplt == 0:
+        print("No paper can be handled by their titles.")
+    elif n_cmplt == 1:
+        print(str(n_cmplt) + " paper can be handled by their titles.")
+    else:
+        print(str(n_cmplt) + " papers can be handled by their titles.")
+    if n_fail == 1:
+        print(str(n_fail) + " paper cannot be handled including:")
+    elif n_fail > 1:
+        print(str(n_fail) + " papers cannot be handled including:")
+    if n_fail >= 1:
+        for i in fail:
+            print(i)
