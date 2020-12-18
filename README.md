@@ -33,7 +33,13 @@ For example: `papers_titles.csv` (there must be a column with the title named `T
 
 &nbsp;&nbsp;&nbsp;&nbsp;`w` - Write - Opens a file for writing, creates the file if it does not exist.
 
-`--style`[alternative]: style of the BibTex (0: standard; 1: condensed; 2: more condensed (delete string between 'DBLP:' and the 2nd '/' after that)), default is `1`.
+`--style`[alternative]: style of the BibTex, default is `1`.
+
+&nbsp;&nbsp;&nbsp;&nbsp;`0`: standard
+
+&nbsp;&nbsp;&nbsp;&nbsp;`1`: condensed
+
+&nbsp;&nbsp;&nbsp;&nbsp;`2`: more condensed (delete string between 'DBLP:' and the 2nd '/' after that)
 
 ### How to use
 ```
@@ -132,7 +138,13 @@ For example: `references.bib`
 
 &nbsp;&nbsp;&nbsp;&nbsp;`w` - 重新写入 - 打开/创建该文件重新写入.
 
-`--style`（可选）: BibTex 的风格 (0: 标准; 1: 精简； 2: 再精简（删除`DBLP`和其后第二个`/`中间的字符串以精简CiteKey）), 默认是 `1`.
+`--style`（可选）: BibTex 的风格, 默认是 `1`.
+
+&nbsp;&nbsp;&nbsp;&nbsp;`0`: 标准
+
+&nbsp;&nbsp;&nbsp;&nbsp;`1`: 精简
+
+&nbsp;&nbsp;&nbsp;&nbsp;`2`: 再精简（删除`DBLP`和其后第二个`/`中间的字符串以精简CiteKey）
 
 ### 使用方法
 ```
