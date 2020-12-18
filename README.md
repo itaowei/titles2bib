@@ -1,14 +1,14 @@
 # titles2bibtex
 BibTex Unification of Papers Based on the Titles Index at dblp
 
-基于 dblp 索引标题的论文 BibTex 信息统一(中文版说明见后）
+基于 dblp 索引标题的论文 BibTeX 信息统一(中文版说明见后）
 
-## BibTex Unification of Papers Based on the Titles Index at dblp
+## BibTeX Unification of Papers Based on the Titles Index at dblp
 
 ### Why & What
-In the coorperation of papers' writting, multiple people may quote the same reference, but different people may have different BibTex information derived from the same paper, which will result in two citations in a paper. In order to unify BibTex information, based on [dblp](https://dblp.org/), a powerful on-line reference for bibliographic information on major computer science publications,  we can basically export consistent BibTex information of papers by searching their titles. 
+In the coorperation of papers' writting, multiple people may quote the same reference, but different people may have different BibTex information derived from the same paper, which will result in two citations in a paper. In order to unify BibTeX information, based on [dblp](https://dblp.org/), a powerful on-line reference for bibliographic information on major computer science publications,  we can basically export consistent BibTex information of papers by searching their titles. 
 
-What we do can also be regarded as the conversion from `papers' titles` to `their uniform BibTexs`.
+What we do can also be regarded as the conversion from `papers' titles` to `their uniform BibTeX s`.
 
 ### Input
 A `.csv` file including many papers' titles which can be exported from reference mangemant app such as Zotero.
@@ -33,7 +33,7 @@ For example: `papers_titles.csv` (there must be a column with the title named `T
 
 &nbsp;&nbsp;&nbsp;&nbsp;`w` - Write - Opens a file for writing, creates the file if it does not exist.
 
-`--style`[alternative]: style of the BibTex, default is `1`.
+`--style`[alternative]: style of the BibTeX, default is `1`.
 
 &nbsp;&nbsp;&nbsp;&nbsp;`0`: standard
 
@@ -110,10 +110,10 @@ For example: `references.bib`
 ```
 
 
-## 基于 dblp 索引标题的论文 BibTex 信息统一
+## 基于 dblp 索引标题的论文 BibTeX 信息统一
 
 ### 为何
-合作撰写论文中，多人可能需要引用同一篇参考文献，而不同人对同一篇文献导出的 BibTex 信息不一致，这样会造成对这篇文献有两个引用。为了统一BibTex信息，基于 [dblp](https://dblp.org/) 强大的平台，通过标题索引的方式，基本能够对计算机领域的论文导出一致的 BibTex 信息，从而实现了 `论文标题集合` 到 `统一格式的 BibTex 集合` 的转换。
+合作撰写论文中，多人可能需要引用同一篇参考文献，而不同人对同一篇文献导出的 BibTeX 信息不一致，这样会造成对这篇文献有两个引用。为了统一BibTeX信息，基于 [dblp](https://dblp.org/) 强大的平台，通过标题索引的方式，基本能够对计算机领域的论文导出一致的 BibTeX 信息，从而实现了 `论文标题集合` 到 `统一格式的 BibTeX 集合` 的转换。
 
 ### 输入
 带有 Title 标题的 csv 文件（该文件可以通过文献管理软件进行导出）
@@ -138,7 +138,7 @@ For example: `references.bib`
 
 &nbsp;&nbsp;&nbsp;&nbsp;`w` - 重新写入 - 打开/创建该文件重新写入.
 
-`--style`（可选）: BibTex 的风格, 默认是 `1`.
+`--style`（可选）: BibTeX 的风格, 默认是 `1`.
 
 &nbsp;&nbsp;&nbsp;&nbsp;`0`: 标准
 
@@ -159,7 +159,7 @@ python titles2bibtex.py --input papers_titles.csv --output references.bib
 
 
 ### 输出
-带有全部 BibTex 信息的 bib 文件
+带有全部 BibTeX 信息的 bib 文件
 
 例如：references.bib
 ```
