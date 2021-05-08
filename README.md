@@ -1,5 +1,5 @@
 # titles2bibtex
-BibTex Unification of Papers Based on the Titles Index at dblp
+<span style="color:red;">BibTex Unification of Papers Based on the Titles Index at dblp</span>
 
 基于 dblp 索引标题的论文 BibTeX 信息统一(中文版说明见后）
 
