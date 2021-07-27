@@ -1,4 +1,5 @@
 # coding:utf-8
+from tqdm import tqdm
 import argparse
 import requests
 from bs4 import BeautifulSoup
@@ -11,6 +12,70 @@ header = {
 }
 
 requests.packages.urllib3.disable_warnings()
+
+
+def search_for_conference_or_journal(keywords):
+
+    search_url = "https://dblp.org/search?q={}".format(keywords)
+
+    # get the content from the webpage
+    content = requests.get(search_url, headers=header, timeout=12999, verify=False)
+    content.encoding = "utf-8"
+    soup = BeautifulSoup(content.text, "lxml")
+
+    # navigate to the URL in the 1st searched result
+    res = soup.select('.result-list > li > a')
+    if len(res) < 1:
+        return False
+    best_match = res[0]
+    list_url = best_match.get('href')
+    if 'https://dblp.org' not in list_url:
+        return False
+    print("Selected {}".format(best_match.get_text()))
+    return best_match.get_text(), list_url
+
+
+def search_for_list_url(conference_or_journal_url, recent_n):
+
+    content = requests.get(conference_or_journal_url, headers=header, timeout=12999, verify=False)
+    content.encoding = "utf-8"
+    soup = BeautifulSoup(content.text, "lxml")
+
+    res = soup.select('#main > ul > li > a')
+    if len(res) < 1:
+        res = soup.select('#main > ul > li > cite > a')
+        if len(res) < 1:
+            return False
+    paper_list_urls = [item.get('href') for item in res]
+    return paper_list_urls[:recent_n]
+
+
+def matched_title(paper_list_url, include_keywords=None):
+
+    content = requests.get(paper_list_url, headers=header, timeout=12999, verify=False)
+    content.encoding = "utf-8"
+    soup = BeautifulSoup(content.text, "lxml")
+
+    res = soup.select('.publ-list > li')
+    if len(res) < 1:
+        return False
+    papers_title = [i.select("cite > .title")[0].get_text() for i in res]
+    # papers_bibtex = [get_bibtex(i.select("div > a")[1].get('href')) for i in tqdm(res)]
+    matched_titles = list()
+    with tqdm(total=len(papers_title)) as pbar:
+        for index, title in enumerate(papers_title):
+            pbar.set_description(title)
+            title_word_list = re.findall(r"[\w']+|[.,!?;]", title)
+            title_word_list_lowercase = [word.lower() for word in title_word_list]
+            for keyword in include_keywords:
+                if keyword.lower() in title_word_list_lowercase:
+                    bibtex = get_bibtex(res[index].select("div > a")[1].get('href')) 
+                    matched_titles.append({"title":title,"bibtex":bibtex})
+            pbar.update(1)
+
+    return matched_titles
+
+
 
 # search for paper's bibtex URL with the title
 # title is a string. e.g. "Reducing Human Effort and Improving Quality in Peer Code Reviews Using Automatic Static Analysis and Reviewer Recommendation"
@@ -38,13 +103,17 @@ def search_for(title):
 
 # get the bibtex information from the web page of URL
 # url is a string. e.g. "https://dblp.org/rec/conf/icse/Balachandran13.html?view=bibtex"
-def get_bibtex(url, style):
+# style is an int. -1: more condensed, 0: condensed, 1: standard, 2: with crossref
+def get_bibtex(url, style=0):
     r= requests.get(url+"&param="+str(style), headers=header, timeout=12999, verify=False)
     r.encoding = "utf-8"
     soup = BeautifulSoup(r.text, "lxml")
     res = soup.select('#bibtex-section > pre')
     # print(res[0].get_text())
-    return res[0].get_text()
+    bibtex_info = res[0].get_text()
+    if style == -1:
+        bibtex_info = re.sub('DBLP:[^/]+/[^/]+/', "", bibtex_info, count=1)# delete string between 'DBLP:' and the 2nd '/' after that
+    return bibtex_info
 
 if  __name__ == '__main__':
     # get parameters
@@ -55,8 +124,8 @@ if  __name__ == '__main__':
                         help='the path of the output file including papers\' BiTex', required = True)
     parser.add_argument("-m","--mode", dest="output_file_mode", metavar="w", default="w",
                         help='mode you want to open the output file', required = False)
-    parser.add_argument("-s","--style", dest="style_of_BibTex", metavar=0, type = int, default=1,
-                        help='style of the BibTex, 0: standard; 1: condensed; 2: more condensed', required = False)
+    parser.add_argument("-s","--style", dest="style_of_BibTex", metavar=0, type = int, default=-1,
+                        help='style of the BibTex, -1: more condensed (delete string between \'DBLP:\' and the 2nd \'/\' after that), 0: condensed, 1: standard, 2: with crossref', required = False)
     args = parser.parse_args()
     
 
@@ -66,11 +135,6 @@ if  __name__ == '__main__':
                 # "a" - Append - Opens a file for appending, creates the file if it does not exist
                 # "w" - Write - Opens a file for writing, creates the file if it does not exist
                 # "x" - Create - Creates the specified file, returns an error if the file exist
-    style_n = args.style_of_BibTex # 0: standard; 1: condensed; 2: more condensed (delete string between 'DBLP:' and the 2nd '/' after that)
-    if style_n == 1 or style_n == 2:
-        style = 0
-    else:
-        style = 1
         
     # get titles' names
     file = pd.read_csv(file_input_path, encoding = 'utf-8')
@@ -89,9 +153,8 @@ if  __name__ == '__main__':
         if url != False:
             n_cmplt+=1
             cmplt.append(i)
-            bibtex_info = get_bibtex(url,style)
-            if style_n == 2: # make BibTex more condensed
-                bibtex_info = re.sub('DBLP:[^/]+/[^/]+/', "", bibtex_info, count=1)# delete string between 'DBLP:' and the 2nd '/' after that
+            bibtex_info = get_bibtex(url,args.style_of_BibTex)
+            
             print(bibtex_info)
             output_file.write(bibtex_info)
             print("=== completed searching for " + i + " ===\n")

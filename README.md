@@ -1,18 +1,27 @@
 # titles2bibtex
+
 <span style="color:red;">BibTex Unification of Papers Based on the Titles Index at dblp</span>
 
 基于 dblp 索引标题的论文 BibTeX 信息统一(中文版说明见后）
 
 ___
 
+## find papers
+
+```sh
+python search_papers_with_keywords_in_the_title.py -search 'IEEE_Transactions_on_Neural_Networks_and_Learning_Systems' -key empirical -max 100  -s -1
+```
+
 ## BibTeX Unification of Papers Based on the Titles Index at dblp
 
 ### Why & What
+
 In the coorperation of papers' writting, multiple people may quote the same reference, but different people may have different BibTex information derived from the same paper, which will result in two citations in a paper. In order to unify BibTeX information, based on [dblp](https://dblp.org/), a powerful on-line reference for bibliographic information on major computer science publications,  we can basically export consistent BibTex information of papers by searching their titles. 
 
 What we do can also be regarded as the conversion from `papers' titles` to `their uniform BibTeX s`.
 
 ### Input
+
 A `.csv` file including many papers' titles which can be exported from reference mangemant app such as Zotero.
 
 For example: `papers_titles.csv` (there must be a column with the title named `Title` in that file)
@@ -25,6 +34,7 @@ For example: `papers_titles.csv` (there must be a column with the title named `T
 
 
 ### Parameter
+
 `--input`: the path of the input file including papers\' titles. e.g. `papers_titles.csv`
 
 `--output`: the path of the output file including papers\' BiTex. e.g. `references.bib`
@@ -44,16 +54,19 @@ For example: `papers_titles.csv` (there must be a column with the title named `T
 &nbsp;&nbsp;&nbsp;&nbsp;`2`: more condensed (delete string between 'DBLP:' and the 2nd '/' after that)
 
 ### How to use
-```
-pip install lxml
-pip install requests
-pip install beautifulsoup4
-pip install pandas
 
+```
+conda create -n titles2bibtex python=3.8 -y
+conda activate titles2bibtex
+pip install lxml==4.6.3 requests==2.26.0 beautifulsoup4==4.9.3 pandas==1.3.1 tqdm==4.61.2
+```
+
+```
 python titles2bibtex.py --input papers_titles.csv --output references.bib
 ```
 
 ### Output
+
 A `.bib` file with uniform BibTex information of the papers.
 
 For example: `references.bib`
