@@ -1,5 +1,5 @@
 # coding:utf-8
-import argparse, json
+import argparse, json, os
 from titles2bibtex import *
 
 header = {
@@ -29,7 +29,7 @@ if  __name__ == '__main__':
 
     result = dict()
     for each in args.search_range:
-        print(each)
+        print("Search:", each)
         conference_or_journal_name, conference_or_journal_url = search_for_conference_or_journal(each)
         result[conference_or_journal_name] = list()
         paper_list_url_list = search_for_list_url(conference_or_journal_url, args.max_list_n)
@@ -38,6 +38,6 @@ if  __name__ == '__main__':
             result[conference_or_journal_name].append({"paper_list_url":paper_list_url,"matched_titles":matched_titles})
 
     if not args.output_file_path:
-        args.output_file_path = "__".join(args.search_range).replace(" ", "_");
-        args.output_file_path += "__{}.json".format("_".join(args.key_words))
+        args.output_file_path = os.path.join("searched_result","__".join(args.search_range).replace(" ", "_"), "{}.json".format("_".join(args.key_words)));
+    os.makedirs(os.path.dirname(args.output_file_path), exist_ok=True)
     json.dump(result, open(args.output_file_path,"w"))

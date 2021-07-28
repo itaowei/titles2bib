@@ -62,9 +62,9 @@ def matched_title(paper_list_url, include_keywords=None):
     papers_title = [i.select("cite > .title")[0].get_text() for i in res]
     # papers_bibtex = [get_bibtex(i.select("div > a")[1].get('href')) for i in tqdm(res)]
     matched_titles = list()
-    with tqdm(total=len(papers_title)) as pbar:
+    with tqdm(total=len(papers_title),desc=paper_list_url) as pbar:
         for index, title in enumerate(papers_title):
-            pbar.set_description(title)
+            # pbar.set_description("{}...".format(title[:20]))
             title_word_list = re.findall(r"[\w']+|[.,!?;]", title)
             title_word_list_lowercase = [word.lower() for word in title_word_list]
             for keyword in include_keywords:
@@ -73,8 +73,6 @@ def matched_title(paper_list_url, include_keywords=None):
                     for url_block in res[index].select("div > a"):
                         if url_block.get('href').find("https://dblp.org/rec/{}".format("/".join(paper_list_url.split("/")[-3:-1]))) != -1:
                             bibtex = get_bibtex(url_block.get('href'))
-#                         else:
-#                             print("https://dblp.org/rec/{}".format("/".join(paper_list_url.split("/")[-3:-1])), url_block.get('href'))
                     matched_titles.append({"title":title,"bibtex":bibtex})
             pbar.update(1)
 
@@ -95,13 +93,10 @@ def search_for(title):
 
     # navigate to the URL corresponding to the second icon in the 1st searched result
     res = soup.select('.publ > ul > li > div > a')
-    # print res[1]
-    # print type(res[1])
     if len(res) < 2:
         return False
     bibtex_str = res[1]
     res = bibtex_str.get('href')
-    # print res
     if 'bibtex' not in res:
         return False
     return res
@@ -114,11 +109,10 @@ def get_bibtex(url, style=0):
     r.encoding = "utf-8"
     soup = BeautifulSoup(r.text, "lxml")
     res = soup.select('#bibtex-section > pre')
-    # print(res[0].get_text())
     try:
         bibtex_info = res[0].get_text()
     except:
-        print(url, res)
+        print("ERROR:",url, res)
         return None
     if style == -1:
         bibtex_info = re.sub('DBLP:[^/]+/[^/]+/', "", bibtex_info, count=1)# delete string between 'DBLP:' and the 2nd '/' after that

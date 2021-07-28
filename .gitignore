@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# Private
+test.ipynb
+
+# Data
+searched_result/
