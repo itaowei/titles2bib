@@ -69,7 +69,12 @@ def matched_title(paper_list_url, include_keywords=None):
             title_word_list_lowercase = [word.lower() for word in title_word_list]
             for keyword in include_keywords:
                 if keyword.lower() in title_word_list_lowercase:
-                    bibtex = get_bibtex(res[index].select("div > a")[1].get('href')) 
+                    bibtex = None
+                    for url_block in res[index].select("div > a"):
+                        if url_block.get('href').find("https://dblp.org/rec/{}".format("/".join(paper_list_url.split("/")[-3:-1]))) != -1:
+                            bibtex = get_bibtex(url_block.get('href'))
+#                         else:
+#                             print("https://dblp.org/rec/{}".format("/".join(paper_list_url.split("/")[-3:-1])), url_block.get('href'))
                     matched_titles.append({"title":title,"bibtex":bibtex})
             pbar.update(1)
 
@@ -110,7 +115,11 @@ def get_bibtex(url, style=0):
     soup = BeautifulSoup(r.text, "lxml")
     res = soup.select('#bibtex-section > pre')
     # print(res[0].get_text())
-    bibtex_info = res[0].get_text()
+    try:
+        bibtex_info = res[0].get_text()
+    except:
+        print(url, res)
+        return None
     if style == -1:
         bibtex_info = re.sub('DBLP:[^/]+/[^/]+/', "", bibtex_info, count=1)# delete string between 'DBLP:' and the 2nd '/' after that
     return bibtex_info
