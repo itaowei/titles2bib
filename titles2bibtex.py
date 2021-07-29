@@ -46,11 +46,15 @@ def search_for_list_url(conference_or_journal_url, recent_n):
         res = soup.select('#main > ul > li > cite > a')
         if len(res) < 1:
             return False
-    paper_list_urls = [item.get('href') for item in res]
+    paper_list_urls = list()
+    for url_block in res:
+        url = str(url_block.get('href'))
+        if url.find("https://dblp.org/db/journals") != -1 or url.find("https://dblp.org/db/conf") != -1:
+            paper_list_urls.append(url)
     return paper_list_urls[:recent_n]
 
 
-def matched_title(paper_list_url, include_keywords=None):
+def matched_title_and_total_papers_num(paper_list_url, include_keywords=None):
 
     content = requests.get(paper_list_url, headers=header, timeout=12999, verify=False)
     content.encoding = "utf-8"
@@ -61,7 +65,7 @@ def matched_title(paper_list_url, include_keywords=None):
         return False
     papers_title = [i.select("cite > .title")[0].get_text() for i in res]
     # papers_bibtex = [get_bibtex(i.select("div > a")[1].get('href')) for i in tqdm(res)]
-    matched_titles = list()
+    matched_titles = {keyword:list() for keyword in include_keywords}
     with tqdm(total=len(papers_title),desc=paper_list_url) as pbar:
         for index, title in enumerate(papers_title):
             # pbar.set_description("{}...".format(title[:20]))
@@ -73,10 +77,10 @@ def matched_title(paper_list_url, include_keywords=None):
                     for url_block in res[index].select("div > a"):
                         if url_block.get('href').find("https://dblp.org/rec/{}".format("/".join(paper_list_url.split("/")[-3:-1]))) != -1:
                             bibtex = get_bibtex(url_block.get('href'))
-                    matched_titles.append({"title":title,"bibtex":bibtex})
+                    matched_titles[keyword].append({"title":title,"bibtex":bibtex})
             pbar.update(1)
 
-    return matched_titles
+    return matched_titles,len(papers_title)
 
 
 
