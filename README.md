@@ -12,6 +12,14 @@ ___
 python search_papers_with_keywords_in_the_title.py -search 'IEEE_Transactions_on_Neural_Networks_and_Learning_Systems' -key empirical -max 100  -s -1
 ```
 
+More examples can be run as,
+
+```sh
+bash search_papers_in_journals.sh
+```
+
+The log file is saved in [`log/search_papers_in_journals.sh.log`](log/search_papers_in_journals.sh.log)
+
 ## BibTeX Unification of Papers Based on the Titles Index at dblp
 
 ### Why & What
@@ -58,7 +66,7 @@ For example: `papers_titles.csv` (there must be a column with the title named `T
 ```
 conda create -n titles2bibtex python=3.8 -y
 conda activate titles2bibtex
-pip install lxml==4.6.3 requests==2.26.0 beautifulsoup4==4.9.3 pandas==1.3.1 tqdm==4.61.2
+pip install lxml==4.6.3 requests==2.26.0 beautifulsoup4==4.9.3 pandas==1.3.1 tqdm==4.61.2 matplotlib==3.4.2
 ```
 
 ```

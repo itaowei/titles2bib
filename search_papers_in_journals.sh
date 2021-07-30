@@ -1,4 +1,4 @@
-journal_list=("Automated Software Engineering" "Empirical Software Engineering" "IEEE Transactions on Neural Networks and Learning Systems")
+journal_list=("IEEE Transactions on Software Engineering" "ACM Transactions on Software Engineering and Methodology" "ACM Transactions on Software Engineering and Methodology" "Automated Software Engineering" "Empirical Software Engineering" "IEEE Transactions on Neural Networks and Learning Systems")
 for journal in "${journal_list[@]}";
 do
     keyword="empirical code commit diff change generation experimental commits diffs changes language multi multi-language multilingual";
