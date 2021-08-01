@@ -50,3 +50,4 @@ if  __name__ == '__main__':
         args.output_file_path = os.path.join("searched_result", "__".join(args.search_range).replace(" ", "_"), "{}.json".format("_".join(args.key_words).replace(" ","_")));
     os.makedirs(os.path.dirname(args.output_file_path), exist_ok=True)
     json.dump(result, open(args.output_file_path,"w"))
+    logger.info("Result saved in {}".format(args.output_file_path))

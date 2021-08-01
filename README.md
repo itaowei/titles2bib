@@ -1,24 +1,36 @@
 # titles2bibtex
 
-<span style="color:red;">BibTex Unification of Papers Based on the Titles Index at dblp</span>
+Using dblp.org, search titles and its BibTex info.
 
-基于 dblp 索引标题的论文 BibTeX 信息统一(中文版说明见后）
+## Environment
 
-___
-
-## find papers
-
-```sh
-python search_papers_with_keywords_in_the_title.py -search 'IEEE_Transactions_on_Neural_Networks_and_Learning_Systems' -key empirical -max 100  -s -1
+```
+conda create -n titles2bibtex python=3.8 -y
+conda activate titles2bibtex
+pip install lxml==4.6.3 requests==2.26.0 beautifulsoup4==4.9.3 pandas==1.3.1 tqdm==4.61.2 matplotlib==3.4.2
 ```
 
-More examples can be run as,
+
+## search papers
+
+If you want to find the titles with `empirical` in the papers published in the recent `100` issues of the journal `IEEE_Transactions_on_Neural_Networks_and_Learning_Systems`,
+
+```sh
+python search_papers_with_keywords_in_the_title.py -search 'IEEE_Transactions_on_Neural_Networks_and_Learning_Systems' -key empirical -max 100  --output_file_path 
+```
+More info about its usage can be seen by `python search_papers_with_keywords_in_the_title.py --help`
+
+### example
+
+5 journals ("IEEE Transactions on Software Engineering" "ACM Transactions on Software Engineering and Methodology" "ACM Transactions on Software Engineering and Methodology" "Automated Software Engineering" "Empirical Software Engineering" "IEEE Transactions on Neural Networks and Learning Systems"O)
+Keywords: empirical code commit diff change generation experimental commits diffs changes language multi multi-language multilingual
 
 ```sh
 bash search_papers_in_journals.sh
 ```
 
 The log file is saved in [`log/search_papers_in_journals.sh.log`](log/search_papers_in_journals.sh.log)
+
 
 ## BibTeX Unification of Papers Based on the Titles Index at dblp
 
@@ -63,11 +75,6 @@ For example: `papers_titles.csv` (there must be a column with the title named `T
 
 ### How to use
 
-```
-conda create -n titles2bibtex python=3.8 -y
-conda activate titles2bibtex
-pip install lxml==4.6.3 requests==2.26.0 beautifulsoup4==4.9.3 pandas==1.3.1 tqdm==4.61.2 matplotlib==3.4.2
-```
 
 ```
 python titles2bibtex.py --input papers_titles.csv --output references.bib
@@ -138,9 +145,11 @@ ___
 ## 基于 dblp 索引标题的论文 BibTeX 信息统一
 
 ### 为何
+
 合作撰写论文中，多人可能需要引用同一篇参考文献，而不同人对同一篇文献导出的 BibTeX 信息不一致，这样会造成对这篇文献有两个引用。为了统一BibTeX信息，基于 [dblp](https://dblp.org/) 强大的平台，通过标题索引的方式，基本能够对计算机领域的论文导出一致的 BibTeX 信息，从而实现了 `论文标题集合` 到 `统一格式的 BibTeX 集合` 的转换。
 
 ### 输入
+
 带有 Title 标题的 csv 文件（该文件可以通过文献管理软件进行导出）
 
 例如：papers_titles.csv (文件中必须有一列的标题为`Title`)
