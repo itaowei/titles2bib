@@ -120,6 +120,12 @@ def get_bibtex(url, style=0):
         return None
     if style == -1:
         bibtex_info = re.sub('DBLP:[^/]+/[^/]+/', "", bibtex_info, count=1)# delete string between 'DBLP:' and the 2nd '/' after that
+    if len(re.findall("= {CoRR}",bibtex_info)) == 1:
+        volume_content = bibtex_info.split("\n  volume ")[1].strip().split("{")[1].strip().split("}")[0]
+        if volume_content.split("/")[0] == 'abs':
+            bibtex_info = re.sub('= {CoRR}', "= {arXiv Preprint}", bibtex_info, count=1)
+            bibtex_info = re.sub('\n  volume ', "\n  url    ", bibtex_info, count=1)
+            bibtex_info = re.sub(volume_content, "https://arxiv.org/abs/{}".format(volume_content.split("/")[1]), bibtex_info, count=1)
     return bibtex_info
 
 if  __name__ == '__main__':
@@ -153,22 +159,22 @@ if  __name__ == '__main__':
     cmplt, fail =[], []
 
     # search each of titles' names
-    for i in df["Title"]:
-        print("=== start searching for " + i + " ===")
-        url = search_for(i)
+    for title in df["Title"]:
+        print("=== start searching for {} ===".format(title))
+        url = search_for(title)
         print(url)
         if url != False:
             n_cmplt+=1
-            cmplt.append(i)
-            bibtex_info = get_bibtex(url,args.style_of_BibTex)
+            cmplt.append(title)
+            bibtex_info = get_bibtex(url, args.style_of_BibTex)
             
             print(bibtex_info)
             output_file.write(bibtex_info)
-            print("=== completed searching for " + i + " ===\n")
+            print("=== completed searching for {} ===\n".format(title))
         else:
             n_fail+=1
-            fail.append(i)
-            print("===  Sorry! it failed searching for " + i + " ===\n")
+            fail.append(title)
+            print("=== SORRY! it failed searching for {} ===\n".format(title))
 
     output_file.close()
     
@@ -185,5 +191,5 @@ if  __name__ == '__main__':
     elif n_fail > 1:
         print(str(n_fail) + " papers cannot be handled including:")
     if n_fail >= 1:
-        for i in fail:
-            print(i)
+        for title in fail:
+            print(title)
